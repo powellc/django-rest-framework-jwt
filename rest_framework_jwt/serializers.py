@@ -11,7 +11,12 @@ from .compat import Serializer
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.compat import get_username_field, PasswordField
 
-from common.utils.locale_utils import translate
+try:
+    from common.utils.locale_utils import translate
+except ImportError:
+    def translate(f):
+        return f
+
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
