@@ -11,11 +11,7 @@ from .compat import Serializer
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.compat import get_username_field, PasswordField
 
-try:
-    from common.utils.locale_utils import translate
-except ImportError:
-    def translate(f):
-        return f
+from common.utils.locale_utils import translate
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -67,7 +63,7 @@ class JSONWebTokenSerializer(Serializer):
                     'user': user
                 }
             else:
-                msg = _('Unable to login with provided credentials.')
+                msg = _('Unable to log in with provided credentials.')
                 raise serializers.ValidationError(msg)
         else:
             msg = _('Must include "{username_field}" and "password".')
