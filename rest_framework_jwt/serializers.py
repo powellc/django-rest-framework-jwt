@@ -11,6 +11,11 @@ from .compat import Serializer
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.compat import get_username_field, PasswordField
 
+try:
+    from common.utils.locale_utils import translate
+except ImportError:
+    def translate(f):
+        return f
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -40,6 +45,7 @@ class JSONWebTokenSerializer(Serializer):
     def username_field(self):
         return get_username_field()
 
+    @translate
     def validate(self, attrs):
         credentials = {
             self.username_field: attrs.get(self.username_field),
@@ -79,6 +85,7 @@ class VerificationBaseSerializer(Serializer):
         msg = 'Please define a validate method.'
         raise NotImplementedError(msg)
 
+    @translate
     def _check_payload(self, token):
         # Check payload valid (based off of JSONWebTokenAuthentication,
         # may want to refactor)
@@ -93,6 +100,7 @@ class VerificationBaseSerializer(Serializer):
 
         return payload
 
+    @translate
     def _check_user(self, payload):
         username = jwt_get_username_from_payload(payload)
 
@@ -136,6 +144,7 @@ class RefreshJSONWebTokenSerializer(VerificationBaseSerializer):
     Refresh an access token.
     """
 
+    @translate
     def validate(self, attrs):
         token = attrs['token']
 

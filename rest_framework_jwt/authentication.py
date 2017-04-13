@@ -10,6 +10,11 @@ from rest_framework.authentication import (
 
 from rest_framework_jwt.settings import api_settings
 
+try:
+    from common.utils.locale_utils import translate
+except ImportError:
+    def translate(f):
+        return f
 
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
@@ -20,6 +25,7 @@ class BaseJSONWebTokenAuthentication(BaseAuthentication):
     Token based authentication using the JSON Web Token standard.
     """
 
+    @translate
     def authenticate(self, request):
         """
         Returns a two-tuple of `User` and token if a valid signature has been
@@ -44,6 +50,7 @@ class BaseJSONWebTokenAuthentication(BaseAuthentication):
 
         return (user, jwt_value)
 
+    @translate
     def authenticate_credentials(self, payload):
         """
         Returns an active user that matches the payload's user id and email.
@@ -78,6 +85,7 @@ class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
     """
     www_authenticate_realm = 'api'
 
+    @translate
     def get_jwt_value(self, request):
         auth = get_authorization_header(request).split()
         auth_header_prefix = api_settings.JWT_AUTH_HEADER_PREFIX.lower()
